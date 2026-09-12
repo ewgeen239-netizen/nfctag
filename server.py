@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 import re
 import secrets
-import sqlite3
 import time
 from urllib.parse import urlparse
 
@@ -25,41 +24,25 @@ from werkzeug.exceptions import HTTPException
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / '.env', override=False)
-MODE = os.getenv('NFC_ENV', 'development')
+from storage import AVAILABLE, DB, IntegrityError, VERCEL, connect
+
+MODE = os.getenv('NFC_ENV', 'production' if VERCEL else 'development')
 if MODE not in ('development', 'production'):
     raise ValueError('NFC_ENV must be development or production')
 PUBLIC_ORIGIN = os.getenv('NFC_PUBLIC_ORIGIN', '').rstrip('/')
+if not PUBLIC_ORIGIN and VERCEL and os.getenv('VERCEL_PROJECT_PRODUCTION_URL'):
+    PUBLIC_ORIGIN = 'https://' + os.environ['VERCEL_PROJECT_PRODUCTION_URL']
 origin_parts = urlparse(PUBLIC_ORIGIN)
 if PUBLIC_ORIGIN and (origin_parts.scheme not in ('http', 'https') or not origin_parts.netloc or origin_parts.path or origin_parts.query or origin_parts.fragment or origin_parts.username):
     raise ValueError('NFC_PUBLIC_ORIGIN must be an origin, for example https://cards.example.com')
 if MODE == 'production' and origin_parts.scheme != 'https':
     raise ValueError('Production requires NFC_PUBLIC_ORIGIN=https://your-domain.example')
-DB = Path(os.getenv('NFC_DB', str(ROOT / 'data' / 'nfc.sqlite3'))).expanduser().resolve()
-DB.parent.mkdir(parents=True, exist_ok=True)
 SESSION_SECONDS = int(os.getenv('NFC_SESSION_DAYS', '7')) * 86400
 if not 86400 <= SESSION_SECONDS <= 90 * 86400:
     raise ValueError('NFC_SESSION_DAYS must be between 1 and 90')
 SECURE_COOKIE = origin_parts.scheme == 'https'
 Image.MAX_IMAGE_PIXELS = 20_000_000
 
-
-def connect():
-    """A connection per operation; WAL supports concurrent Gunicorn workers."""
-    db = sqlite3.connect(DB, timeout=15)
-    db.row_factory = sqlite3.Row
-    return db
-
-
-with connect() as db:
-    db.execute('PRAGMA journal_mode=WAL')
-    db.executescript('''
-        CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,profile TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires INTEGER NOT NULL);
-        CREATE TABLE IF NOT EXISTS local_links(token TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires INTEGER NOT NULL);
-        CREATE TABLE IF NOT EXISTS auth_attempts(ip TEXT NOT NULL,email TEXT NOT NULL,created INTEGER NOT NULL);
-        CREATE INDEX IF NOT EXISTS auth_attempts_time ON auth_attempts(created);
-    ''')
-os.chmod(DB, 0o600)
 
 app = Flask(__name__, static_folder=None)
 app.config.update(MAX_CONTENT_LENGTH=3_000_000, JSON_SORT_KEYS=False)
@@ -116,6 +99,8 @@ def issue_session(response, user_id):
 
 @app.before_request
 def validate_mutation():
+    if not AVAILABLE and (request.path.startswith('/api/') or request.path.startswith('/local-login/')):
+        return error('storage_unavailable', 503)
     if request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
         expected = PUBLIC_ORIGIN or request.host_url.rstrip('/')
         if request.headers.get('Origin', '').rstrip('/') != expected:
@@ -143,6 +128,8 @@ def http_error(exception):
 
 @app.get('/healthz')
 def health():
+    if not AVAILABLE:
+        return jsonify(ok=False, error='storage_unavailable'), 503
     with connect() as db:
         db.execute('SELECT 1').fetchone()
     return jsonify(ok=True)
@@ -153,7 +140,7 @@ def health():
 @app.get('/p/<public_id>')
 def page(public_id=None):
     html = (ROOT / 'index.html').read_text()
-    if session_user():
+    if AVAILABLE and session_user():
         html = html.replace('<span data-account-label>Войти</span>', '<span data-account-label>Личный кабинет</span>')
     return Response(html, content_type='text/html; charset=utf-8')
 
@@ -184,8 +171,8 @@ def auth_throttled(email):
     with connect() as db:
         db.execute('BEGIN IMMEDIATE')
         db.execute('DELETE FROM auth_attempts WHERE created<?', (now - 900,))
-        count_ip = db.execute('SELECT COUNT(*) FROM auth_attempts WHERE ip=?', (ip,)).fetchone()[0]
-        count_email = db.execute('SELECT COUNT(*) FROM auth_attempts WHERE email=?', (email_key,)).fetchone()[0]
+        count_ip = db.execute('SELECT COUNT(*) AS total FROM auth_attempts WHERE ip=?', (ip,)).fetchone()['total']
+        count_email = db.execute('SELECT COUNT(*) AS total FROM auth_attempts WHERE email=?', (email_key,)).fetchone()['total']
         if count_ip >= 60 or count_email >= 12:
             return True
         db.execute('INSERT INTO auth_attempts VALUES(?,?,?)', (ip, email_key, now))
@@ -215,7 +202,7 @@ def authenticate():
             user_id = secrets.token_urlsafe(12)
             try:
                 db.execute('INSERT INTO users VALUES(?,?,?,?)', (user_id, email, password_hash(password), json.dumps({'firstName': '', 'design': 'Лайм'})))
-            except sqlite3.IntegrityError:
+            except IntegrityError:
                 return error('exists', 409)
         else:
             encoded = user['password'] if user else password_hash('dummy-password')

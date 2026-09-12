@@ -129,3 +129,28 @@ Working: accounts, profiles, photos, all listed contacts, immutable public pages
 Not included: payment processing, order submission/fulfillment, delivery tracking, email verification, password recovery, an operator dashboard, public hosting activation or writing a physical NFC tag. Saving a design preference is not an order or a payment. The physical-card artwork remains a concept; final print assets and the owner's author mark must be approved before manufacturing.
 
 The development-only `python server.py --local-login EMAIL` command creates a one-use link valid for 90 seconds for an existing local account. It requires filesystem access and is disabled in production or whenever a public origin is configured. No test passwords are distributed.
+
+## Vercel deployment
+
+Import this repository with the Flask preset. `server.py` exports the WSGI app;
+`vercel.json` copies public assets to the CDN during the build. Gunicorn and Docker
+settings are only used by persistent-server deployments.
+
+Vercel requires **a dedicated PostgreSQL database**. Connect a new database for
+this project (for example Neon via Vercel Storage), and securely set `DATABASE_URL`
+to its PostgreSQL connection string with TLS. The psycopg adapter is implemented
+in `storage.py`; profiles, normalized photos, sessions and rate limits all persist
+in PostgreSQL. Schema creation is automatic and serialized across instances.
+Do not connect another application's database.
+
+Set `NFC_ENV=production`. Set `NFC_PUBLIC_ORIGIN` to the stable HTTPS production
+domain, or omit it to use Vercel's `VERCEL_PROJECT_PRODUCTION_URL`. Optional
+`NFC_SESSION_DAYS=7` controls session lifetime. `NFC_DB`, `NFC_WORKERS`, `NFC_HOST`
+and `NFC_PORT` are not needed on Vercel. Never set SQLite to `/tmp`: it loses data.
+Without `DATABASE_URL`, the landing page works, account APIs and `/healthz` return
+503, and the account dialog shows an unavailable message. Registration cannot
+silently create disposable accounts. Redeploy after connecting the database.
+
+Local SQLite remains supported. No local accounts, passwords or photos are copied
+to PostgreSQL automatically. Keep existing NFC links on their original domain;
+changing domains requires redirects and an explicit data migration preserving IDs.

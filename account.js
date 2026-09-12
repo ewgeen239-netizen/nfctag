@@ -15,6 +15,7 @@ async function api(path, method = "GET", body) {
   return data;
 }
 const accountErrors = {
+  storage_unavailable: "Кабинет временно недоступен. Попробуй позже.",
   rate_limited: "Слишком много попыток. Попробуй через 15 минут.",
   credentials: "Неверный email или пароль.",
   credentials_format: "Введи email и пароль от 10 до 128 символов.",
@@ -57,6 +58,10 @@ async function openAccount() {
   } catch (error) {
     if (error.message === "unauthorized") setAccount(null);
     else $("#auth-status").textContent = accountError(error);
+    if (error.message === "storage_unavailable") {
+      $("#auth-form").hidden = true;
+      auth.querySelector(".notice").textContent = accountError(error);
+    }
     if (!auth.open) auth.showModal();
   }
 }
