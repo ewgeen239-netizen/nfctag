@@ -1,0 +1,3 @@
+# Preserve upstream shader strings in the generated Three.js bundle.
+assets/vendor/* linguist-vendored -whitespace
+assets/icons/* linguist-vendored

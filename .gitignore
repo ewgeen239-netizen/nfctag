@@ -1,0 +1,18 @@
+# Private configuration and local state
+.env
+.env.*
+!.env.example
+.codex/
+.venv/
+venv/
+data/
+uploads/
+*.sqlite*
+*.db
+*.db-*
+*.log
+__pycache__/
+*.py[cod]
+.DS_Store
+node_modules/
+coverage/

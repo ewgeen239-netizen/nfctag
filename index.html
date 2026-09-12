@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#161616" />
+    <title>NFC — всё о тебе по касанию</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <a class="logo" href="/" aria-label="NFC, главная">NFC<span>)))</span></a>
+      <div class="nav-drop">
+        <nav aria-label="Основная навигация">
+          <a href="/#how">Как это работает</a><a href="/#design">Дизайн карт</a>
+        </nav>
+        <div class="language-picker" aria-label="Выбор языка">
+          <button data-lang="ru">RU</button><button data-lang="pl">PL</button
+          ><button data-lang="en">EN</button><button data-lang="de">DE</button>
+          <details class="language-menu">
+            <summary aria-label="Все доступные языки">▦</summary>
+            <div>
+              <button data-lang="ru">Русский</button
+              ><button data-lang="pl">Polski</button
+              ><button data-lang="en">English</button
+              ><button data-lang="de">Deutsch</button>
+            </div>
+          </details>
+        </div>
+      </div>
+      <button class="outline small account-entry" data-editor>
+        <span data-account-label>Войти</span>
+      </button>
+    </header>
+    <main id="landing">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">ТВОЙ МИР. ОДНО КАСАНИЕ.</div>
+          <h1>Тебя сложно<br />описать.<br /><span>Легко показать.</span></h1>
+          <p>Твой стиль — на карте.<br />Всё о тебе — по касанию.</p>
+          <div class="actions">
+            <button class="primary" data-editor>
+              Создать свою карту <span>↗</span></button
+            ><button class="outline" id="example">
+              ▷ &nbsp; Посмотреть пример
+            </button>
+          </div>
+        </div>
+        <div class="hero-art hero-3d">
+          <div
+            id="hero-scene"
+            role="img"
+            aria-label="3D-демонстрация: руки подносят NFC-карту к телефону, касаются уведомления и открывают визитку."
+          >
+            <canvas aria-hidden="true"></canvas>
+          </div>
+          <div class="scene-caption">
+            <span id="scene-status">Поднеси карту</span
+            ><button id="scene-toggle" type="button" aria-pressed="false">
+              Пауза</button
+            ><span class="scene-label">Одно касание</span>
+          </div>
+        </div>
+        <div class="hero-bottom">
+          <span>01 / ПРИЛОЖИ</span><span>02 / ОТКРОЙ</span
+          ><span>03 / ПОЗНАКОМЬСЯ</span
+          ><span class="muted">Больше, чем визитка</span>
+        </div>
+      </section>
+      <section class="intro section" id="how">
+        <div class="intro-title">
+          <h2>Одно знакомство —<br />больше возможностей.</h2>
+          <p>Профессия, навыки и контакты — на одной странице.</p>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <span class="feature-icon">↗</span>
+            <h3>Расскажи о себе</h3>
+            <p>Покажи, кто ты, чем занимаешься и что тебя вдохновляет.</p>
+          </article>
+          <article>
+            <span class="feature-icon lilac">✳</span>
+            <h3>Подчеркни навыки</h3>
+            <p>
+              Твои сильные стороны, профессия и открытость к новым проектам.
+            </p>
+          </article>
+          <article>
+            <span class="feature-icon">↗</span>
+            <h3>Оставь контакты</h3>
+            <p>
+              Соцсети, телефон и портфолио. Всё рядом, ничего не потеряется.
+            </p>
+          </article>
+          <article>
+            <span class="feature-icon lilac">✧</span>
+            <h3>Запомнись</h3>
+            <p>
+              Карта с твоим характером. Вместо очередного номера в телефоне.
+            </p>
+          </article>
+        </div>
+        <div class="tap-demo">
+          <div>
+            <span class="eyebrow">КАК ЭТО РАБОТАЕТ</span>
+            <h3>Касание.<br />И вы уже знакомы.</h3>
+            <p>
+              Поднеси карту к NFC-зоне совместимого телефона. Открой уведомление
+              — появится твоя визитка.
+            </p>
+            <button class="text-button" id="tap">Попробовать касание ↗</button>
+            <p class="caption" id="tap-status" aria-live="polite">
+              Попробуй, как работает касание.
+            </p>
+          </div>
+          <div class="demo-scene">
+            <div class="mini-card">
+              NFC <span>)))</span><b>БОЛЬШЕ<br />ИДЕЙ<br />НА ЛЮДЯХ</b
+              ><i>Твоё имя</i>
+            </div>
+            <div class="mini-phone">
+              <div class="notch"></div>
+              <span class="phone-symbol">)))</span>
+              <p id="phone-message">Поднеси карту</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section designs" id="design">
+        <span class="eyebrow">МАЛЕНЬКАЯ КАРТА. БОЛЬШОЙ ХАРАКТЕР.</span>
+        <h2>Твой стиль.<br />В реальном мире.</h2>
+        <div class="design-grid">
+          <button
+            class="design-option selected"
+            data-design="Лайм"
+            aria-pressed="true"
+          >
+            <div class="product lime">
+              <span>NFC )))</span><strong>HELLO.<br />IT’S ME.</strong
+              ><i>Твоё имя</i>
+            </div>
+            <div class="design-label">
+              Лайм <span>01 / Выбран</span>
+            </div></button
+          ><button
+            class="design-option"
+            data-design="Сирень"
+            aria-pressed="false"
+          >
+            <div class="product purple">
+              <span>NFC )))</span><strong>MAKE<br />CONTACT.</strong
+              ><i>Твоё имя</i>
+            </div>
+            <div class="design-label">
+              Сирень <span>02 / Выбрать</span>
+            </div></button
+          ><button
+            class="design-option"
+            data-design="Моно"
+            aria-pressed="false"
+          >
+            <div class="product mono">
+              <span>NFC )))</span><strong>БОЛЬШЕ<br />ЧЕМ ИМЯ.</strong
+              ><i>Твоё имя</i>
+            </div>
+            <div class="design-label">Моно <span>03 / Выбрать</span></div>
+          </button>
+        </div>
+        <div class="design-foot">
+          <p>
+            Готовый шаблон с персонализацией или твоя уникальная идея. Сохрани
+            пожелания к оформлению в кабинете.
+          </p>
+          <button class="outline" data-editor>Персонализировать ↗</button>
+        </div>
+      </section>
+      <section class="section process">
+        <h2>От идеи<br />до первого касания.</h2>
+        <ol>
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Создай визитку</h3>
+              <p>Добавь фото, профессию, навыки и контакты.</p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>Согласуй дизайн</h3>
+              <p>
+                Выбери шаблон или опиши свою идею. Макет согласовывается перед
+                изготовлением.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Получи свою карту</h3>
+              <p>
+                NTAG216. Изготовление ориентировочно 1–2 недели, затем отправка.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+      <section class="section faq">
+        <h2>Ещё пару вещей.</h2>
+        <details>
+          <summary>Что записано на карте?</summary>
+          <p>
+            Постоянная ссылка на твою визитку. Меняй данные в личном кабинете —
+            адрес останется прежним.
+          </p>
+        </details>
+        <details>
+          <summary>Нужно устанавливать приложение?</summary>
+          <p>
+            Для просмотра визитки достаточно браузера и интернета. Чтение карты
+            зависит от поддержки NFC и настроек телефона.
+          </p>
+        </details>
+        <details>
+          <summary>Как выбрать оформление карты?</summary>
+          <p>
+            Выбери шаблон и сохрани идею оформления в кабинете. Перед
+            изготовлением макет нужно согласовать.
+          </p>
+        </details>
+      </section>
+      <footer>
+        <a class="logo" href="#">NFC<span>)))</span></a>
+        <p>Хорошие знакомства начинаются с тебя.</p>
+        <span>Твой мир. Одно касание.</span>
+      </footer>
+    </main>
+    <dialog id="editor">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">ТВОЯ ЦИФРОВАЯ ВИЗИТКА</span>
+          <h2>Начнём с тебя.</h2>
+        </div>
+        <button class="close" aria-label="Закрыть редактор">×</button>
+      </div>
+      <p class="notice">
+        Расскажи о себе и добавь контакты, которыми хочешь поделиться.
+      </p>
+      <div class="account-bar">
+        <span id="account-email" data-user-content></span
+        ><button class="text-button" id="logout">Выйти</button>
+      </div>
+      <p class="link-explain">
+        Ссылка закреплена за вашей визиткой. Меняйте дизайн и данные — адрес
+        останется прежним.
+      </p>
+      <label>Постоянная ссылка<input id="public-link" readonly /></label>
+      <div class="actions link-actions">
+        <button type="button" class="outline" id="copy-link">
+          Копировать ссылку</button
+        ><a class="outline" id="open-public" target="_blank" rel="noopener"
+          >Открыть визитку ↗</a
+        >
+      </div>
+      <p id="link-status" role="status"></p>
+      <form id="profile-form" autocomplete="off">
+        <div class="form-grid">
+          <label
+            >Имя<input
+              name="firstName"
+              maxlength="40"
+              required
+              placeholder="Александр" /></label
+          ><label
+            >Фамилия<input
+              name="lastName"
+              maxlength="50"
+              placeholder="Иванов" /></label
+          ><label class="wide"
+            >Фото<input
+              type="file"
+              id="photo"
+              accept="image/png,image/jpeg,image/webp"
+            /><small>JPG, PNG или WebP, до 2 МБ</small></label
+          ><label class="wide"
+            >О себе<textarea
+              name="bio"
+              maxlength="2000"
+              placeholder="Расскажи, чем занимаешься и с чем к тебе обращаться."
+            ></textarea></label
+          ><label
+            >Профессия<input
+              name="job"
+              maxlength="80"
+              placeholder="Дизайнер" /></label
+          ><label
+            >Навыки, через запятую<input
+              name="skills"
+              maxlength="500"
+              placeholder="Брендинг, веб-дизайн, UI/UX" /></label
+          ><label class="wide"
+            >Вакансии и проекты<textarea
+              name="opportunities"
+              maxlength="1000"
+              placeholder="Открыт к проектам и предложениям"
+            ></textarea></label
+          ><label class="wide"
+            >Услуги и предложения<textarea
+              name="services"
+              maxlength="1000"
+              placeholder="Какие задачи ты помогаешь решать?"
+            ></textarea></label
+          ><label
+            >Телефон<input
+              name="phone"
+              type="tel"
+              maxlength="30"
+              placeholder="+48 ..." /></label
+          ><label
+            >Соцсеть или портфолио<input
+              name="social"
+              type="url"
+              placeholder="https://..." /></label
+          ><label
+            >Instagram<input
+              name="instagram"
+              type="url"
+              maxlength="500"
+              placeholder="https://www.instagram.com/username" /></label
+          ><label
+            >Telegram<input
+              name="telegram"
+              type="url"
+              maxlength="500"
+              placeholder="https://t.me/username" /></label
+          ><label
+            >WhatsApp<input
+              name="whatsapp"
+              type="tel"
+              maxlength="30"
+              placeholder="+48 123 456 789"
+            /><small>Номер с кодом страны</small></label
+          ><label
+            >Контактный email<input
+              name="contactEmail"
+              type="email"
+              maxlength="254"
+              placeholder="hello@example.com" /></label
+          ><label class="wide"
+            >Акцент цифровой визитки<select name="accent">
+              <option value="lime">Лайм</option>
+              <option value="lilac">Сирень</option>
+              <option value="silver">Серебро</option></select
+            ><small>Единый стиль, твой цветовой акцент</small></label
+          ><label
+            >Дизайн карты<select name="design">
+              <option value="Лайм">Лайм</option>
+              <option value="Сирень">Сирень</option>
+              <option value="Моно">Моно</option>
+              <option value="Уникальный дизайн">Уникальный дизайн</option>
+            </select></label
+          ><label
+            >Идея для дизайна<input
+              name="idea"
+              maxlength="200"
+              placeholder="Что добавить на карту?"
+          /></label>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary">Сохранить визитку ↗</button
+          ><button type="button" class="outline" id="preview-draft">
+            Предпросмотр
+          </button>
+        </div>
+        <p id="save-status" role="status"></p>
+      </form>
+    </dialog>
+    <dialog id="save-complete" aria-labelledby="complete-title">
+      <button class="close" aria-label="Закрыть">×</button>
+      <div class="complete-symbol" aria-hidden="true">✓</div>
+      <h2 id="complete-title">Всё готово</h2>
+      <p>Твоя визитка обновлена. Можно знакомиться.</p>
+      <label>Постоянная ссылка<input id="complete-link" readonly /></label
+      ><button class="outline" id="complete-copy">Копировать ссылку</button>
+      <p id="complete-status" role="status"></p>
+      <button class="primary" id="complete-account">
+        Перейти в личный кабинет
+      </button>
+    </dialog>
+    <dialog id="preview" aria-label="Мобильный предпросмотр">
+      <button class="close" aria-label="Закрыть пример">×</button>
+      <div id="profile-view"></div>
+      <p class="preview-note">
+        Предпросмотр несохранённых изменений. Сохрани визитку, чтобы обновить
+        постоянную страницу.
+      </p>
+    </dialog>
+    <dialog id="auth">
+      <div class="modal-head">
+        <h2 id="auth-title">Войти в кабинет</h2>
+        <button class="close" aria-label="Закрыть">×</button>
+      </div>
+      <p class="notice">Войди, чтобы продолжить работу над своей визиткой.</p>
+      <form id="auth-form">
+        <label
+          >Email<input
+            id="auth-email"
+            type="email"
+            autocomplete="email"
+            required
+            maxlength="254" /></label
+        ><label
+          >Пароль<input
+            id="auth-password"
+            type="password"
+            autocomplete="current-password"
+            minlength="10"
+            maxlength="128"
+            required
+        /></label>
+        <p class="caption">От 10 до 128 символов.</p>
+        <button class="primary" id="auth-submit" type="submit">Войти</button
+        ><button class="text-button" id="auth-toggle" type="button">
+          Нет аккаунта? Регистрация
+        </button>
+        <p id="auth-status" role="status"></p>
+      </form>
+    </dialog>
+    <script src="/app.js"></script>
+    <script src="/account.js"></script>
+    <script src="/i18n.js"></script>
+    <script type="module" src="/hero-loader.js"></script>
+  </body>
+</html>
