@@ -105,7 +105,7 @@ Keep backups outside the web root and limit filesystem access. Losing the databa
 | `account.js` | Session-aware navigation, sign-in, first save, redirect to `/account` and translated public cards. |
 | `i18n.js` | RU/PL/EN/DE interface dictionaries, browser-language default, language persistence and document language updates. |
 | `translate.py` | DeepL requests, per-field translation cache and owner corrections. |
-| `hero-loader.js` | Loads the 3D runtime only when the landing hero approaches the viewport; public profiles do not load Three.js. |
+| `hero-loader.js` | Loads the hero video only when the landing hero approaches the viewport, pauses it offscreen and for reduced motion, and falls back to the 3D scene if the video cannot play. Public profiles load neither. |
 | `hero-scene.js` | Three.js hands, card, phone, notification, tap sequence and light profile. Includes pause, reduced-motion handling and offscreen suspension. This is a rendered 3D animation, not recorded video. |
 | `server.py` | Flask application, configuration, SQLite, authorization, upload validation and explicit static-file allowlist. |
 | `gunicorn.conf.py` | Production server binding, worker/thread limits and graceful restart settings. |
@@ -117,6 +117,7 @@ Keep backups outside the web root and limit filesystem access. Losing the databa
 | `deploy/github-actions-check.yml.example` | Optional GitHub Actions template: Python integration tests, JavaScript syntax checks and container build. Copy to `.github/workflows/check.yml` using credentials with workflow permission to enable CI. |
 | `assets/icons/` | Tabler Icons 3.46.0 SVGs; MIT license included. |
 | `assets/vendor/` | Bundled Three.js 0.186.0, approximately 725 KiB; MIT license included. |
+| `assets/video/` | Hero footage: [Pexels video 6602062](https://www.pexels.com/video/a-person-paying-bills-using-smartphone-6602062/) by Pavel Danilyuk, Pexels License. Re-encoded as a seamless forward/reverse loop (720p desktop, 540p mobile, no audio) with a poster frame. |
 | `assets/concept.png` | Original generated product illustration used only if WebGL is unavailable. It is not a customer photo. |
 
 The initial repository README title `nfctag` is retained. Local `.codex` settings, environments, databases, sessions, customer uploads and logs are excluded from Git and Docker builds.

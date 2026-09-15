@@ -66,6 +66,7 @@ STATIC = {
     'style.css', 'app.js', 'account.js', 'i18n.js', 'hero-loader.js', 'hero-scene.js',
     'profile-card.js', 'cabinet.js', 'cabinet.css',
     'assets/concept.png', 'assets/vendor/three.module.min.js',
+    'assets/video/hero-tap-720.mp4', 'assets/video/hero-tap-540.mp4', 'assets/video/hero-tap-poster.jpg',
 }
 STATIC.update('assets/icons/' + icon + '.svg' for icon in (
     'phone', 'brand-instagram', 'brand-telegram', 'brand-whatsapp', 'mail', 'link', 'user-plus', 'world',

@@ -744,6 +744,11 @@ Object.assign(translations, {
   ],
 });
 Object.assign(translations, {
+  "Демонстрация: одно NFC-касание — и контакт уже у тебя.": [
+    "Demonstracja: jedno dotknięcie NFC i kontakt jest już u Ciebie.",
+    "Demonstration: one NFC tap and the contact is yours.",
+    "Demo: ein NFC-Tap und der Kontakt ist schon bei dir.",
+  ],
   "ЛИЧНЫЙ КАБИНЕТ": ["MOJE KONTO", "MY ACCOUNT", "MEIN KONTO"],
   "Твоя визитка.": ["Twoja wizytówka.", "Your card.", "Deine Visitenkarte."],
   "Меняй всё, что видно на визитке. Ссылка на карте останется прежней.": [

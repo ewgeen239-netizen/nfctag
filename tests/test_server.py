@@ -64,6 +64,7 @@ class AccountsTest(unittest.TestCase):
         self.assertEqual(self.req(anon,'/p/'+aid)[0],200)
         self.assertIn(b'href="/style.css"',self.req(anon,'/p/'+aid)[1])
         self.assertIn(b'src="/account.js"',self.req(anon,'/p/'+aid)[1])
+        for name in ('hero-tap-720.mp4','hero-tap-540.mp4','hero-tap-poster.jpg'):self.assertEqual(self.req(anon,'/assets/video/'+name)[0],200)
         self.proc.terminate();self.proc.wait();self.start()
         self.assertEqual(self.req(a,'/api/me')[1]['publicUrl'],url)
         self.assertEqual(self.req(anon,'/api/public/'+aid)[1]['profile']['firstName'],'Alice updated')

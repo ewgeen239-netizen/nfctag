@@ -1841,6 +1841,36 @@ html[lang="de"] .header-tools .small {
 .public-page .hero-3d {
   display: none;
 }
+/* Real footage hero. The canvas stays for the 3D fallback. */
+.hero-3d #hero-scene {
+  position: relative;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 60%;
+  filter: saturate(0.92) contrast(1.04);
+  -webkit-mask-image: radial-gradient(
+    ellipse 72% 68% at 55% 52%,
+    #000 52%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 72% 68% at 55% 52%,
+    #000 52%,
+    transparent 100%
+  );
+}
+.video-active .hero-video {
+  display: block;
+}
+.video-active canvas {
+  display: none;
+}
 /* Shared light digital profile; the landing page stays graphite. */
 .digital-card {
   --card-accent: #d8fa86;
