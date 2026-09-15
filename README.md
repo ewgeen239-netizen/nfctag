@@ -2,7 +2,7 @@
 
 NFC cards and mobile contact profiles. Graphite landing page, an animated 3D NFC interaction, a shared light mobile profile, and Russian, Polish, English and German interfaces.
 
-The application includes account registration and sign-in, editable profiles, photo uploads, contact links, vCard downloads and permanent public URLs. It runs on Flask + Gunicorn and persists accounts, sessions, profiles and photos in SQLite. No external database or object-storage account is required.
+The application includes account registration and sign-in, editable profiles, photo uploads, contact links, vCard downloads and permanent public URLs. It runs on Flask, with Gunicorn on persistent hosts or Vercel Functions. Accounts, sessions, profiles and photos persist in SQLite locally or dedicated PostgreSQL on Vercel. Object storage is not required.
 
 ## Run locally
 
@@ -47,7 +47,7 @@ Without Docker, install the requirements, configure the same environment, provis
 gunicorn --config gunicorn.conf.py server:app
 ```
 
-Production deliberately refuses to start without a public HTTPS origin. `/healthz` checks both the HTTP application and SQLite access. A health probe must send the configured domain in its Host header. The Docker image includes this probe and runs as non-root UID 10001; a bind-mounted directory must be writable by that UID.
+Production deliberately refuses to start without a public HTTPS origin. `/healthz` checks both the HTTP application and database access. A health probe must send the configured domain in its Host header. The Docker image includes this probe and runs as non-root UID 10001; a bind-mounted directory must be writable by that UID.
 
 ### Environment variables
 
@@ -64,15 +64,15 @@ All variables below are implemented. Put them in the hosting dashboard or an unt
 | `NFC_SESSION_DAYS` | Optional | Login lifetime, default `7`, allowed range `1–90`. |
 | `NFC_TRUST_PROXY` | Optional | Default `0`. Set `1` only when exactly one trusted proxy is the application's only ingress and replaces client-supplied forwarded headers. |
 
-There is no `DATABASE_URL`, S3/R2 key or session signing secret to supply. The implementation uses SQLite and cryptographically random, server-stored session tokens. Email is an account identifier; the application does not send email.
+Set `DATABASE_URL` when using PostgreSQL (required on Vercel); omit it for SQLite on a persistent disk. No S3/R2 key or session signing secret is needed. Sessions use cryptographically random, server-stored tokens. Email is an account identifier; the application does not send email.
 
 ## Permanent NFC URLs and data
 
 Registration creates an opaque random ID once. `/p/<id>` stays the same when the owner changes their name, contacts, photo, physical-card design or digital accent. The API refuses client-supplied identity fields and edits only the profile belonging to the current session. A replacement physical NFC card may use the same URL.
 
-A public page reads saved data from SQLite without requiring a login. Contact email is a separate, explicitly public field; the account's login email and private physical-design notes are not included in public API responses. Optional empty sections are hidden. Instagram and Telegram accept full HTTPS profile URLs; WhatsApp accepts a phone number with country code. The website/portfolio field accepts HTTP or HTTPS.
+A public page reads saved data from the database without requiring a login. Contact email is a separate, explicitly public field; the account's login email and private physical-design notes are not included in public API responses. Optional empty sections are hidden. Instagram and Telegram accept full HTTPS profile URLs; WhatsApp accepts a phone number with country code. The website/portfolio field accepts HTTP or HTTPS.
 
-Photo uploads accept JPG, PNG and WebP up to 2 MiB. New images are decoded, bounded to 1600 pixels and re-encoded as JPEG without original metadata. This keeps photo storage with the profile and avoids separate storage credentials. Account passwords use salted scrypt; session tokens are hashed in the database. Cookies are HttpOnly and SameSite=Strict, and Secure when configured for HTTPS. Mutations require the configured Origin. Sign-in/registration attempts are limited over a 15-minute window using shared SQLite state.
+Photo uploads accept JPG, PNG and WebP up to 2 MiB. New images are decoded, bounded to 1600 pixels and re-encoded as JPEG without original metadata. This keeps photo storage with the profile and avoids separate storage credentials. Account passwords use salted scrypt; session tokens are hashed in the database. Cookies are HttpOnly and SameSite=Strict, and Secure when configured for HTTPS. Mutations require the configured Origin. Sign-in/registration attempts are limited over a 15-minute window using shared database state.
 
 ### Preserve links during deployment
 
@@ -84,7 +84,7 @@ Back up the entire SQLite database using SQLite's backup API. Do not copy only t
 python -c "import os,sqlite3; source=sqlite3.connect(os.environ['NFC_DB']); target=sqlite3.connect('/private-backups/nfctag.sqlite3'); source.backup(target); target.close(); source.close()"
 ```
 
-Keep backups outside the web root and limit filesystem access. Losing the database or the domain can break old NFC links; maintaining both is required. This version targets one host with local persistent storage, not multiple machines sharing a database over network storage.
+Keep backups outside the web root and limit filesystem access. Losing the database or the domain can break old NFC links; maintaining both is required. The SQLite configuration targets one host with local persistent storage, not multiple machines sharing a database over network storage.
 
 ## Interface and file map
 
@@ -154,3 +154,5 @@ silently create disposable accounts. Redeploy after connecting the database.
 Local SQLite remains supported. No local accounts, passwords or photos are copied
 to PostgreSQL automatically. Keep existing NFC links on their original domain;
 changing domains requires redirects and an explicit data migration preserving IDs.
+
+Production site: https://nfctag-zeta.vercel.app/ — project: https://vercel.com/ewgeen/nfctag. The dedicated Neon database is named `nfctag`; its integration supplies `DATABASE_URL` securely. Local private data is not deployed.
