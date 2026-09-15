@@ -25,6 +25,7 @@ from werkzeug.exceptions import HTTPException
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / '.env', override=False)
 from storage import AVAILABLE, DB, IntegrityError, VERCEL, connect
+import translate
 
 MODE = os.getenv('NFC_ENV', 'production' if VERCEL else 'development')
 if MODE not in ('development', 'production'):
@@ -57,9 +58,13 @@ ALLOWED = {
     'opportunities': 1000, 'phone': 30, 'social': 500, 'design': 40, 'idea': 200,
     'photo': 2_800_000, 'instagram': 500, 'telegram': 500, 'whatsapp': 30,
     'contactEmail': 254, 'services': 1000, 'accent': 10,
+    'titleAbout': 60, 'titleSkills': 60, 'titleServices': 60, 'titleOpportunities': 60, 'titleContacts': 60,
+    'sections': 120, 'vcard': 3,
 }
+SECTIONS = ('about', 'skills', 'services', 'opportunities', 'contacts')
 STATIC = {
     'style.css', 'app.js', 'account.js', 'i18n.js', 'hero-loader.js', 'hero-scene.js',
+    'profile-card.js', 'cabinet.js', 'cabinet.css',
     'assets/concept.png', 'assets/vendor/three.module.min.js',
 }
 STATIC.update('assets/icons/' + icon + '.svg' for icon in (
@@ -145,6 +150,15 @@ def page(public_id=None):
     return Response(html, content_type='text/html; charset=utf-8')
 
 
+@app.get('/account')
+def account_page():
+    """Personal account for an existing card. Sign-in and first creation stay on the landing page."""
+    user = session_user() if AVAILABLE else None
+    if not user or not json.loads(user['profile']).get('firstName'):
+        return redirect('/?account=1', code=303)
+    return Response((ROOT / 'account.html').read_text(), content_type='text/html; charset=utf-8')
+
+
 @app.get('/api/me')
 def me():
     user = session_user()
@@ -161,7 +175,37 @@ def public_profile(public_id):
         return error('not_found', 404)
     # Physical-print notes are private. Account email and credentials never leave this API.
     profile = {key: value for key, value in json.loads(user['profile']).items() if key in ALLOWED and key not in ('idea', 'design')}
-    return jsonify(id=user['id'], profile=profile)
+    # Profiles saved before translation existed are translated on their first public view.
+    translate.refresh(user['id'], profile)
+    return jsonify(id=user['id'], profile=profile, translations=translate.localized(user['id'], profile))
+
+
+@app.get('/api/translations')
+def translations():
+    user = session_user()
+    if not user:
+        return error('unauthorized', 401)
+    profile = json.loads(user['profile'])
+    complete = translate.refresh(user['id'], profile)
+    return jsonify(enabled=translate.ENABLED, complete=complete, languages=translate.editable(user['id'], profile))
+
+
+@app.put('/api/translations')
+def save_translations():
+    user = session_user()
+    if not user:
+        return error('unauthorized', 401)
+    body = request.get_json()
+    if not isinstance(body, dict) or set(body) - set(translate.LANGUAGES):
+        return error('invalid', 400)
+    for fields in body.values():
+        if not isinstance(fields, dict) or set(fields) - set(translate.FIELDS) or not all(isinstance(v, str) for v in fields.values()):
+            return error('invalid', 400)
+    try:
+        translate.save_manual(user['id'], json.loads(user['profile']), body, ALLOWED)
+    except ValueError:
+        return error('invalid', 400)
+    return jsonify(ok=True)
 
 
 def auth_throttled(email):
@@ -277,6 +321,12 @@ def save_profile():
         return error('contacts_invalid', 400)
     if profile['accent'] not in ('', 'lime', 'lilac', 'silver'):
         return error('invalid', 400)
+    if profile['vcard'] not in ('', 'off'):
+        return error('invalid', 400)
+    if profile['sections']:
+        # Ordered section IDs, each exactly once; "!" hides a section.
+        if sorted(token.removeprefix('!') for token in profile['sections'].split(',')) != sorted(SECTIONS):
+            return error('invalid', 400)
     if profile['photo'] and profile['photo'] != existing.get('photo'):
         try:
             profile['photo'] = normalize_photo(profile['photo'])
@@ -284,7 +334,8 @@ def save_profile():
             return error('invalid', 400)
     with connect() as db:
         db.execute('UPDATE users SET profile=? WHERE id=?', (json.dumps(profile, ensure_ascii=False), user['id']))
-    return jsonify(ok=True, id=user['id'])
+    # Best effort: the profile is already saved even if the translation provider is unavailable.
+    return jsonify(ok=True, id=user['id'], translated=translate.refresh(user['id'], profile))
 
 
 @app.get('/local-login/<token>')

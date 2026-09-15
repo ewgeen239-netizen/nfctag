@@ -63,6 +63,7 @@ All variables below are implemented. Put them in the hosting dashboard or an unt
 | `NFC_WORKERS` | Optional | Gunicorn processes, default `2`, each with four threads. Run on one host sharing one local SQLite volume. |
 | `NFC_SESSION_DAYS` | Optional | Login lifetime, default `7`, allowed range `1–90`. |
 | `NFC_TRUST_PROXY` | Optional | Default `0`. Set `1` only when exactly one trusted proxy is the application's only ingress and replaces client-supplied forwarded headers. |
+| `DEEPL_API_KEY` | Recommended | DeepL API key for automatic card translation into RU/PL/EN/DE. Free-plan keys end with `:fx` and use `api-free.deepl.com`. Without it, owners can still enter translations manually. |
 
 Set `DATABASE_URL` when using PostgreSQL (required on Vercel); omit it for SQLite on a persistent disk. No S3/R2 key or session signing secret is needed. Sessions use cryptographically random, server-stored tokens. Email is an account identifier; the application does not send email.
 
@@ -73,6 +74,12 @@ Registration creates an opaque random ID once. `/p/<id>` stays the same when the
 A public page reads saved data from the database without requiring a login. Contact email is a separate, explicitly public field; the account's login email and private physical-design notes are not included in public API responses. Optional empty sections are hidden. Instagram and Telegram accept full HTTPS profile URLs; WhatsApp accepts a phone number with country code. The website/portfolio field accepts HTTP or HTTPS.
 
 Photo uploads accept JPG, PNG and WebP up to 2 MiB. New images are decoded, bounded to 1600 pixels and re-encoded as JPEG without original metadata. This keeps photo storage with the profile and avoids separate storage credentials. Account passwords use salted scrypt; session tokens are hashed in the database. Cookies are HttpOnly and SameSite=Strict, and Secure when configured for HTTPS. Mutations require the configured Origin. Sign-in/registration attempts are limited over a 15-minute window using shared database state.
+
+### Personal account and translations
+
+The first card is created in the editor dialog on the landing page. Once a card has a name, **Личный кабинет** opens `/account`, a separate page for that account with a live preview. The owner edits the photo (upload or remove), name, profession, every text, all contacts, the “Save contact” button, section order, visibility and custom headings, the digital accent and physical-card preferences. `/account` redirects to sign-in when there is no session.
+
+Card texts (profession, about, skills, services, opportunities and custom headings) are translated into every site language with DeepL when the profile is saved. Names and contact values are not translated. Results are cached per field in the additive `profile_translations` table, so unchanged text is never sent again; the `users` table and existing profiles are not rewritten. Profiles saved before this feature are translated on their first public view. The owner can correct any translation; a correction applies until its source text changes. Public cards open in the visitor's browser language (RU/PL/EN/DE, Russian otherwise) and switch with the language picker. If DeepL is unavailable, saving still succeeds, the original text is shown, and translation is retried after five minutes.
 
 ### Preserve links during deployment
 
@@ -90,11 +97,14 @@ Keep backups outside the web root and limit filesystem access. Losing the databa
 
 | File | Responsibility |
 | --- | --- |
-| `index.html` | Landing sections, account forms, mobile preview and success dialog. |
+| `index.html` | Landing sections, sign-in, first-card editor, mobile preview and success dialog. |
+| `account.html`, `cabinet.js`, `cabinet.css` | Personal account page: full card editing, section layout, live preview and translation corrections. |
 | `style.css` | Responsive design, separate brand/navigation/account header, light public card, contact rows and motion preferences. |
-| `app.js` | Profile rendering, editable contact fields, templates, upload selection and vCard export. |
-| `account.js` | Session-aware navigation, API calls, save/error behavior and permanent-link confirmation. |
-| `i18n.js` | RU/PL/EN/DE dictionaries, language persistence and document language updates. User-entered profile content is not translated. |
+| `profile-card.js` | Shared API helpers, errors, photo reading, card rendering, section layout, translation merge and vCard export. |
+| `app.js` | Landing templates, first-card editor draft and demo previews. |
+| `account.js` | Session-aware navigation, sign-in, first save, redirect to `/account` and translated public cards. |
+| `i18n.js` | RU/PL/EN/DE interface dictionaries, browser-language default, language persistence and document language updates. |
+| `translate.py` | DeepL requests, per-field translation cache and owner corrections. |
 | `hero-loader.js` | Loads the 3D runtime only when the landing hero approaches the viewport; public profiles do not load Three.js. |
 | `hero-scene.js` | Three.js hands, card, phone, notification, tap sequence and light profile. Includes pause, reduced-motion handling and offscreen suspension. This is a rendered 3D animation, not recorded video. |
 | `server.py` | Flask application, configuration, SQLite, authorization, upload validation and explicit static-file allowlist. |
@@ -115,7 +125,7 @@ The initial repository README title `nfctag` is retained. Local `.codex` setting
 
 ```sh
 python -m unittest discover -s tests -v
-for file in app.js account.js i18n.js hero-loader.js hero-scene.js; do
+for file in profile-card.js app.js account.js cabinet.js i18n.js hero-loader.js hero-scene.js; do
   node --check "$file"
 done
 ```

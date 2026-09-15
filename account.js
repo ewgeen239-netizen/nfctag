@@ -3,42 +3,17 @@ let authMode = "login";
 let saving = false;
 const auth = $("#auth");
 const complete = $("#save-complete");
+const accountPath = "/account";
 
-async function api(path, method = "GET", body) {
-  const response = await fetch(path, {
-    method,
-    headers: body ? { "Content-Type": "application/json" } : {},
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || "network");
-  return data;
-}
-const accountErrors = {
-  storage_unavailable: "Кабинет временно недоступен. Попробуй позже.",
-  rate_limited: "Слишком много попыток. Попробуй через 15 минут.",
-  credentials: "Неверный email или пароль.",
-  credentials_format: "Введи email и пароль от 10 до 128 символов.",
-  exists: "Этот email уже зарегистрирован.",
-  unauthorized: "Войди снова, чтобы сохранить изменения.",
-  name_required: "Укажи имя",
-  invalid: "Проверь поля формы.",
-  contacts_invalid:
-    "Проверь ссылки Instagram и Telegram, email и номер WhatsApp с кодом страны.",
-  too_large: "Файл слишком большой.",
-  origin: "Запрос отклонён. Обнови страницу.",
-};
-function accountError(error) {
-  return (
-    accountErrors[error.message] ||
-    "Не удалось выполнить запрос. Проверь соединение и попробуй снова."
-  );
-}
 function setAccount(account) {
   currentAccount = account;
   document.querySelectorAll("[data-account-label]").forEach((label) => {
     label.textContent = account ? "Личный кабинет" : "Войти";
   });
+}
+// The first card is created in the editor dialog; afterwards the account is a separate page.
+function hasCard(account) {
+  return Boolean(account && account.profile.firstName);
 }
 const accountReady = api("/api/me")
   .then((account) => {
@@ -48,13 +23,19 @@ const accountReady = api("/api/me")
     if (error.message === "unauthorized") setAccount(null);
   });
 
+function enterAccount() {
+  if (hasCard(currentAccount)) {
+    location.assign(accountPath);
+    return;
+  }
+  loadAccount();
+  if (!editor.open) editor.showModal();
+}
 async function openAccount() {
   await accountReady;
   try {
-    const account = await api("/api/me");
-    setAccount(account);
-    loadAccount();
-    if (!editor.open) editor.showModal();
+    setAccount(await api("/api/me"));
+    enterAccount();
   } catch (error) {
     if (error.message === "unauthorized") setAccount(null);
     else $("#auth-status").textContent = accountError(error);
@@ -68,7 +49,7 @@ async function openAccount() {
 function loadAccount() {
   form.reset();
   for (const [key, value] of Object.entries(currentAccount.profile)) {
-    if (form.elements[key]) form.elements[key].value = value;
+    if (key !== "photo" && form.elements[key]) form.elements[key].value = value;
   }
   form.elements.accent.value = currentAccount.profile.accent || "lime";
   photo = currentAccount.profile.photo || "";
@@ -106,8 +87,7 @@ $("#auth-form").onsubmit = async (event) => {
     $("#auth-password").value = "";
     setAccount(await api("/api/me"));
     auth.close();
-    loadAccount();
-    if (!editor.open) editor.showModal();
+    enterAccount();
   } catch (error) {
     $("#auth-status").textContent = accountError(error);
   } finally {
@@ -125,23 +105,10 @@ $("#logout").onclick = async () => {
     $("#save-status").textContent = accountError(error);
   }
 };
-async function copyLink(input, status) {
-  try {
-    await navigator.clipboard.writeText(input.value);
-    status.textContent = "Ссылка скопирована.";
-  } catch {
-    input.select();
-    status.textContent = "Выделенная ссылка готова к копированию.";
-  }
-}
 $("#copy-link").onclick = () => copyLink($("#public-link"), $("#link-status"));
 $("#complete-copy").onclick = () =>
   copyLink($("#complete-link"), $("#complete-status"));
-$("#complete-account").onclick = () => {
-  complete.close();
-  // The saved form is still intact. No onboarding reset or redundant network read.
-  editor.showModal();
-};
+$("#complete-account").onclick = () => location.assign(accountPath);
 editor.addEventListener("cancel", (event) => {
   if (saving) event.preventDefault();
 });
@@ -182,7 +149,13 @@ if (publicMatch) {
   document.body.append(publicView);
   api("/api/public/" + publicMatch[1])
     .then((data) => {
-      publicView.append(renderProfile(data.profile));
+      // Visitors see the card in the site language: browser default or their choice.
+      const render = () =>
+        publicView.replaceChildren(
+          renderProfile(localizeProfile(data.profile, data.translations)),
+        );
+      render();
+      document.addEventListener("nfc-language-change", render);
     })
     .catch(() => {
       publicView.append(

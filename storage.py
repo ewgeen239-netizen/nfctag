@@ -19,6 +19,8 @@ SCHEMA = (
     'CREATE TABLE IF NOT EXISTS local_links(token TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires BIGINT NOT NULL)',
     'CREATE TABLE IF NOT EXISTS auth_attempts(ip TEXT NOT NULL,email TEXT NOT NULL,created BIGINT NOT NULL)',
     'CREATE INDEX IF NOT EXISTS auth_attempts_time ON auth_attempts(created)',
+    # Additive: translations live beside profiles; the users table is never rewritten.
+    'CREATE TABLE IF NOT EXISTS profile_translations(user_id TEXT NOT NULL,lang TEXT NOT NULL,auto TEXT NOT NULL,manual TEXT NOT NULL,PRIMARY KEY(user_id,lang))',
 )
 _ready = False
 _lock = threading.Lock()

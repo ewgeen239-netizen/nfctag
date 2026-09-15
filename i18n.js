@@ -743,8 +743,125 @@ Object.assign(translations, {
     "Zu viele Versuche. Versuche es in 15 Minuten erneut.",
   ],
 });
+Object.assign(translations, {
+  "ЛИЧНЫЙ КАБИНЕТ": ["MOJE KONTO", "MY ACCOUNT", "MEIN KONTO"],
+  "Твоя визитка.": ["Twoja wizytówka.", "Your card.", "Deine Visitenkarte."],
+  "Меняй всё, что видно на визитке. Ссылка на карте останется прежней.": [
+    "Zmieniaj wszystko, co widać na wizytówce. Link na karcie pozostanie ten sam.",
+    "Change everything shown on your card. The link on your NFC card stays the same.",
+    "Ändere alles, was auf deiner Visitenkarte zu sehen ist. Der Link auf der Karte bleibt gleich.",
+  ],
+  "Предпросмотр ↓": ["Podgląd ↓", "Preview ↓", "Vorschau ↓"],
+  "Фото и имя": ["Zdjęcie i imię", "Photo and name", "Foto und Name"],
+  "Загрузить фото": ["Prześlij zdjęcie", "Upload photo", "Foto hochladen"],
+  "Удалить фото": ["Usuń zdjęcie", "Remove photo", "Foto entfernen"],
+  "Тексты визитки": ["Teksty wizytówki", "Card texts", "Texte der Visitenkarte"],
+  Контакты: ["Kontakty", "Contacts", "Kontakte"],
+  "Показывать кнопку «Сохранить контакт»": [
+    "Pokazuj przycisk „Zapisz kontakt”",
+    "Show the “Save contact” button",
+    "Schaltfläche „Kontakt speichern“ anzeigen",
+  ],
+  "Разделы и заголовки": [
+    "Sekcje i nagłówki",
+    "Sections and headings",
+    "Abschnitte und Überschriften",
+  ],
+  "Порядок, видимость и названия разделов. Пустое название — стандартное.": [
+    "Kolejność, widoczność i nazwy sekcji. Puste pole oznacza nazwę domyślną.",
+    "Order, visibility and names of sections. Leave a name empty to use the default.",
+    "Reihenfolge, Sichtbarkeit und Namen der Abschnitte. Leer bedeutet Standardname.",
+  ],
+  "Показывать раздел": ["Pokazuj sekcję", "Show section", "Abschnitt anzeigen"],
+  "Своё название раздела": [
+    "Własna nazwa sekcji",
+    "Custom section name",
+    "Eigener Abschnittsname",
+  ],
+  Выше: ["W górę", "Move up", "Nach oben"],
+  Ниже: ["W dół", "Move down", "Nach unten"],
+  Оформление: ["Wygląd", "Appearance", "Gestaltung"],
+  "Сохранить изменения ↗": [
+    "Zapisz zmiany ↗",
+    "Save changes ↗",
+    "Änderungen speichern ↗",
+  ],
+  Переводы: ["Tłumaczenia", "Translations", "Übersetzungen"],
+  "Тексты визитки автоматически переводятся на все языки сайта. Посетитель видит визитку на языке своего браузера. Исправь перевод, если нужно: пустое поле возвращает автоперевод.":
+    [
+      "Teksty wizytówki są automatycznie tłumaczone na wszystkie języki strony. Odwiedzający widzi wizytówkę w języku swojej przeglądarki. Popraw tłumaczenie w razie potrzeby: puste pole przywraca tłumaczenie automatyczne.",
+      "Your card texts are automatically translated into every site language. Visitors see your card in their browser language. Correct a translation if needed: an empty field restores the automatic one.",
+      "Die Texte deiner Visitenkarte werden automatisch in alle Sprachen der Website übersetzt. Besucher sehen sie in ihrer Browsersprache. Korrigiere bei Bedarf: Ein leeres Feld stellt die automatische Übersetzung wieder her.",
+    ],
+  "Сохранить переводы": [
+    "Zapisz tłumaczenia",
+    "Save translations",
+    "Übersetzungen speichern",
+  ],
+  ПРЕДПРОСМОТР: ["PODGLĄD", "PREVIEW", "VORSCHAU"],
+  "На языке сайта, вместе с переводами": [
+    "W języku strony, z tłumaczeniami",
+    "In the site language, with translations",
+    "In der Sprache der Website, mit Übersetzungen",
+  ],
+  "Заголовок раздела": ["Nagłówek sekcji", "Section heading", "Abschnittsüberschrift"],
+  "Перевод ещё не готов": [
+    "Tłumaczenie nie jest jeszcze gotowe",
+    "Translation not ready yet",
+    "Übersetzung noch nicht fertig",
+  ],
+  "Заполни тексты визитки, и здесь появятся переводы.": [
+    "Uzupełnij teksty wizytówki, a tutaj pojawią się tłumaczenia.",
+    "Fill in your card texts and translations will appear here.",
+    "Fülle die Texte deiner Visitenkarte aus, dann erscheinen hier die Übersetzungen.",
+  ],
+  "Автоперевод не настроен на сервере. Переводы можно заполнить вручную.": [
+    "Automatyczne tłumaczenie nie jest skonfigurowane na serwerze. Tłumaczenia można wpisać ręcznie.",
+    "Automatic translation is not configured on the server. You can enter translations manually.",
+    "Automatische Übersetzung ist auf dem Server nicht eingerichtet. Übersetzungen können manuell eingetragen werden.",
+  ],
+  "Переводы актуальны.": [
+    "Tłumaczenia są aktualne.",
+    "Translations are up to date.",
+    "Übersetzungen sind aktuell.",
+  ],
+  "Часть текстов пока не переведена. Попробуй позже.": [
+    "Część tekstów nie jest jeszcze przetłumaczona. Spróbuj później.",
+    "Some texts are not translated yet. Try again later.",
+    "Einige Texte sind noch nicht übersetzt. Versuche es später erneut.",
+  ],
+  "Сохранено. Визитка обновлена.": [
+    "Zapisano. Wizytówka została zaktualizowana.",
+    "Saved. Your card is updated.",
+    "Gespeichert. Deine Visitenkarte ist aktualisiert.",
+  ],
+  "Сохранено. Переводы обновятся позже.": [
+    "Zapisano. Tłumaczenia zaktualizują się później.",
+    "Saved. Translations will update later.",
+    "Gespeichert. Übersetzungen werden später aktualisiert.",
+  ],
+  "Сначала сохрани изменения визитки.": [
+    "Najpierw zapisz zmiany wizytówki.",
+    "Save your card changes first.",
+    "Speichere zuerst die Änderungen der Visitenkarte.",
+  ],
+  "Переводы сохранены.": [
+    "Tłumaczenia zapisane.",
+    "Translations saved.",
+    "Übersetzungen gespeichert.",
+  ],
+});
+// Formatted HTML wraps long text across lines; compare text with collapsed whitespace.
+const collapse = (value) => value.replace(/\s+/g, " ").trim();
+const dictionary = new Map(
+  Object.entries(translations).map(([key, value]) => [collapse(key), value]),
+);
 const languages = ["ru", "pl", "en", "de"];
-let language = "ru";
+// A saved choice wins; otherwise follow the visitor's browser languages.
+let language =
+  (navigator.languages || [navigator.language || ""])
+    .map((value) => String(value).slice(0, 2).toLowerCase())
+    .find((value) => languages.includes(value)) || "ru";
 try {
   const value = localStorage.getItem("nfc-language");
   if (languages.includes(value)) language = value;
@@ -754,7 +871,8 @@ const originalText = new WeakMap(),
 function translate(source) {
   return language === "ru"
     ? source
-    : translations[source]?.[languages.indexOf(language) - 1] || source;
+    : dictionary.get(collapse(source))?.[languages.indexOf(language) - 1] ||
+        source;
 }
 window.nfcTranslate = translate;
 function applyTranslations() {
@@ -772,7 +890,7 @@ function applyTranslations() {
     let entry = originalText.get(text);
     if (!entry || current !== entry.rendered) entry = { source: current };
     const trimmed = entry.source.trim();
-    entry.rendered = translations[trimmed]
+    entry.rendered = dictionary.has(collapse(trimmed))
       ? entry.source.replace(trimmed, translate(trimmed))
       : entry.source;
     if (text.nodeValue !== entry.rendered) text.nodeValue = entry.rendered;

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#161616" />
+    <meta name="robots" content="noindex" />
+    <title>NFC — всё о тебе по касанию</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/cabinet.css" />
+  </head>
+  <body class="cabinet-page">
+    <header class="header">
+      <a class="logo" href="/" aria-label="NFC, главная">NFC<span>)))</span></a>
+      <div class="nav-drop">
+        <div class="language-picker" aria-label="Выбор языка">
+          <button data-lang="ru">RU</button><button data-lang="pl">PL</button
+          ><button data-lang="en">EN</button><button data-lang="de">DE</button>
+          <details class="language-menu">
+            <summary aria-label="Все доступные языки">▦</summary>
+            <div>
+              <button data-lang="ru">Русский</button
+              ><button data-lang="pl">Polski</button
+              ><button data-lang="en">English</button
+              ><button data-lang="de">Deutsch</button>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="cabinet-header-actions">
+        <a class="outline small" id="open-public" target="_blank" rel="noopener"
+          >Открыть визитку ↗</a
+        ><button class="outline small" id="logout" type="button">Выйти</button>
+      </div>
+    </header>
+    <main class="cabinet">
+      <section class="cabinet-intro">
+        <span class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
+        <h1>Твоя визитка.</h1>
+        <p>
+          Меняй всё, что видно на визитке. Ссылка на карте останется прежней.
+        </p>
+        <p class="cabinet-email" id="account-email" data-user-content></p>
+        <div class="cabinet-link">
+          <label>Постоянная ссылка<input id="public-link" readonly /></label
+          ><button type="button" class="outline small" id="copy-link">
+            Копировать ссылку
+          </button>
+        </div>
+        <p id="link-status" role="status"></p>
+        <a class="text-button cabinet-preview-link" href="#cabinet-preview"
+          >Предпросмотр ↓</a
+        >
+      </section>
+      <div class="cabinet-layout">
+        <div class="cabinet-main">
+          <form id="cabinet-form" autocomplete="off">
+            <fieldset class="cabinet-panel">
+              <legend>Фото и имя</legend>
+              <div class="photo-row">
+                <div class="photo-thumb" id="photo-thumb"></div>
+                <div class="photo-actions">
+                  <label class="outline small file-button"
+                    >Загрузить фото<input
+                      type="file"
+                      id="photo-file"
+                      accept="image/png,image/jpeg,image/webp"
+                  /></label>
+                  <button type="button" class="text-button" id="photo-remove">
+                    Удалить фото
+                  </button>
+                  <small>JPG, PNG или WebP, до 2 МБ</small>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label
+                  >Имя<input
+                    name="firstName"
+                    maxlength="40"
+                    required
+                    placeholder="Александр" /></label
+                ><label
+                  >Фамилия<input
+                    name="lastName"
+                    maxlength="50"
+                    placeholder="Иванов" /></label
+                ><label class="wide"
+                  >Профессия<input
+                    name="job"
+                    maxlength="80"
+                    placeholder="Дизайнер"
+                /></label>
+              </div>
+            </fieldset>
+            <fieldset class="cabinet-panel">
+              <legend>Тексты визитки</legend>
+              <div class="form-grid">
+                <label class="wide"
+                  >О себе<textarea
+                    name="bio"
+                    maxlength="2000"
+                    placeholder="Расскажи, чем занимаешься и с чем к тебе обращаться."
+                  ></textarea></label
+                ><label class="wide"
+                  >Навыки, через запятую<input
+                    name="skills"
+                    maxlength="500"
+                    placeholder="Брендинг, веб-дизайн, UI/UX" /></label
+                ><label class="wide"
+                  >Услуги и предложения<textarea
+                    name="services"
+                    maxlength="1000"
+                    placeholder="Какие задачи ты помогаешь решать?"
+                  ></textarea></label
+                ><label class="wide"
+                  >Вакансии и проекты<textarea
+                    name="opportunities"
+                    maxlength="1000"
+                    placeholder="Открыт к проектам и предложениям"
+                  ></textarea>
+                </label>
+              </div>
+            </fieldset>
+            <fieldset class="cabinet-panel">
+              <legend>Контакты</legend>
+              <div class="form-grid">
+                <label
+                  >Телефон<input
+                    name="phone"
+                    type="tel"
+                    maxlength="30"
+                    placeholder="+48 ..." /></label
+                ><label
+                  >Соцсеть или портфолио<input
+                    name="social"
+                    type="url"
+                    maxlength="500"
+                    placeholder="https://..." /></label
+                ><label
+                  >Instagram<input
+                    name="instagram"
+                    type="url"
+                    maxlength="500"
+                    placeholder="https://www.instagram.com/username" /></label
+                ><label
+                  >Telegram<input
+                    name="telegram"
+                    type="url"
+                    maxlength="500"
+                    placeholder="https://t.me/username" /></label
+                ><label
+                  >WhatsApp<input
+                    name="whatsapp"
+                    type="tel"
+                    maxlength="30"
+                    placeholder="+48 123 456 789"
+                  /><small>Номер с кодом страны</small></label
+                ><label
+                  >Контактный email<input
+                    name="contactEmail"
+                    type="email"
+                    maxlength="254"
+                    placeholder="hello@example.com" /></label
+                ><label class="wide check-row"
+                  ><input type="checkbox" id="vcard-toggle" /><span
+                    >Показывать кнопку «Сохранить контакт»</span
+                  ></label
+                >
+              </div>
+            </fieldset>
+            <fieldset class="cabinet-panel">
+              <legend>Разделы и заголовки</legend>
+              <p class="panel-hint">
+                Порядок, видимость и названия разделов. Пустое название —
+                стандартное.
+              </p>
+              <ol class="section-list" id="section-list"></ol>
+            </fieldset>
+            <fieldset class="cabinet-panel">
+              <legend>Оформление</legend>
+              <div class="form-grid">
+                <label class="wide"
+                  >Акцент цифровой визитки<select name="accent">
+                    <option value="lime">Лайм</option>
+                    <option value="lilac">Сирень</option>
+                    <option value="silver">Серебро</option></select
+                  ><small>Единый стиль, твой цветовой акцент</small></label
+                ><label
+                  >Дизайн карты<select name="design">
+                    <option value="Лайм">Лайм</option>
+                    <option value="Сирень">Сирень</option>
+                    <option value="Моно">Моно</option>
+                    <option value="Уникальный дизайн">Уникальный дизайн</option>
+                  </select></label
+                ><label
+                  >Идея для дизайна<input
+                    name="idea"
+                    maxlength="200"
+                    placeholder="Что добавить на карту?"
+                /></label>
+              </div>
+            </fieldset>
+            <div class="cabinet-save">
+              <button type="submit" class="primary">
+                Сохранить изменения ↗
+              </button>
+              <p id="save-status" role="status"></p>
+            </div>
+          </form>
+          <section class="cabinet-panel" id="translations">
+            <h2 class="panel-title">Переводы</h2>
+            <p class="panel-hint">
+              Тексты визитки автоматически переводятся на все языки сайта.
+              Посетитель видит визитку на языке своего браузера. Исправь
+              перевод, если нужно: пустое поле возвращает автоперевод.
+            </p>
+            <p class="translation-state" id="translation-state" role="status"></p>
+            <div class="translation-tabs">
+              <button type="button" data-translation-lang="ru">Русский</button
+              ><button type="button" data-translation-lang="pl">Polski</button
+              ><button type="button" data-translation-lang="en">English</button
+              ><button type="button" data-translation-lang="de">Deutsch</button>
+            </div>
+            <form id="translation-form" autocomplete="off">
+              <div id="translation-fields"></div>
+              <div class="actions">
+                <button type="submit" class="outline small">
+                  Сохранить переводы
+                </button>
+              </div>
+              <p id="translation-status" role="status"></p>
+            </form>
+          </section>
+        </div>
+        <aside
+          class="cabinet-preview"
+          id="cabinet-preview"
+          aria-label="Мобильный предпросмотр"
+        >
+          <div class="cabinet-preview-head">
+            <span class="eyebrow">ПРЕДПРОСМОТР</span
+            ><small>На языке сайта, вместе с переводами</small>
+          </div>
+          <div class="cabinet-phone"><div id="profile-view"></div></div>
+        </aside>
+      </div>
+    </main>
+    <script src="/profile-card.js"></script>
+    <script src="/cabinet.js"></script>
+    <script src="/i18n.js"></script>
+  </body>
+</html>

@@ -5,7 +5,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt \
     && useradd --uid 10001 --create-home app \
     && mkdir /data && chown app:app /data
-COPY --chown=app:app server.py storage.py gunicorn.conf.py index.html style.css app.js account.js i18n.js hero-loader.js hero-scene.js ./
+COPY --chown=app:app server.py storage.py translate.py gunicorn.conf.py index.html account.html style.css cabinet.css profile-card.js app.js account.js cabinet.js i18n.js hero-loader.js hero-scene.js ./
 COPY --chown=app:app assets/ ./assets/
 USER app
 EXPOSE 8080
