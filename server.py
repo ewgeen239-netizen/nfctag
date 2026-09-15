@@ -63,6 +63,8 @@ ALLOWED = {
 }
 SECTIONS = ('about', 'skills', 'services', 'opportunities', 'contacts')
 STATIC = {
+    "favicon.ico", "assets/brand/favicon.svg", "assets/brand/favicon-96.png",
+    "assets/brand/favicon-192.png", "assets/brand/apple-touch-icon.png",
     'style.css', 'app.js', 'account.js', 'i18n.js', 'hero-loader.js', 'hero-scene.js',
     'profile-card.js', 'cabinet.js', 'cabinet.css',
     'assets/concept.png', 'assets/vendor/three.module.min.js',
