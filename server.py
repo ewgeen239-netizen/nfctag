@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import qrcode
 import time
 from urllib.parse import urlparse
 
@@ -71,7 +72,7 @@ STATIC = {
     'assets/video/hero-tap-720.mp4', 'assets/video/hero-tap-540.mp4', 'assets/video/hero-tap-poster.jpg',
 }
 STATIC.update('assets/icons/' + icon + '.svg' for icon in (
-    'phone', 'brand-instagram', 'brand-telegram', 'brand-whatsapp', 'mail', 'link', 'user-plus', 'world',
+    'phone', 'brand-instagram', 'brand-telegram', 'brand-whatsapp', 'mail', 'link', 'user-plus', 'world', 'qr',
 ))
 
 
@@ -181,6 +182,21 @@ def public_profile(public_id):
     # Profiles saved before translation existed are translated on their first public view.
     translate.refresh(user['id'], profile)
     return jsonify(id=user['id'], profile=profile, translations=translate.localized(user['id'], profile))
+
+
+@app.get('/api/qr/<public_id>')
+def profile_qr(public_id):
+    if not re.fullmatch(r'[A-Za-z0-9_-]{1,100}', public_id):
+        return error('not_found', 404)
+    with connect() as db:
+        user = db.execute('SELECT id FROM users WHERE id=?', (public_id,)).fetchone()
+    if not user:
+        return error('not_found', 404)
+    url = (PUBLIC_ORIGIN or request.host_url.rstrip('/')) + '/p/' + public_id
+    output = io.BytesIO()
+    qrcode.make(url, box_size=8, border=4).save(output, format='PNG')
+    output.seek(0)
+    return send_file(output, mimetype='image/png')
 
 
 @app.get('/api/translations')

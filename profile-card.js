@@ -166,7 +166,7 @@ function downloadContact(profile, name) {
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-function renderProfile(profile, isDemo = false) {
+function renderProfile(profile, isDemo = false, publicUrl = "") {
   const card = node(
     "article",
     "digital-card accent-" +
@@ -200,8 +200,7 @@ function renderProfile(profile, isDemo = false) {
   identity.append(personalNode("h1", "profile-name", name, isDemo));
   if (profile.job)
     identity.append(personalNode("p", "profile-job", profile.job, isDemo));
-  portrait.append(identity);
-  card.append(portrait);
+  card.append(portrait, identity);
   const content = node("div", "profile-content");
   function heading(id) {
     const custom = (profile[cardTitleFields[id]] || "").trim();
@@ -212,7 +211,8 @@ function renderProfile(profile, isDemo = false) {
   function textSection(id, value) {
     if (!value || !value.trim()) return;
     const block = node("section", "profile-section");
-    block.append(heading(id), personalNode("p", "profile-body", value, isDemo));
+    if (id !== "about") block.append(heading(id));
+    block.append(personalNode("p", "profile-body", value, isDemo));
     content.append(block);
   }
   function skillsSection() {
@@ -246,12 +246,7 @@ function renderProfile(profile, isDemo = false) {
         "brand-instagram",
         ["instagram.com", "www.instagram.com"],
       ],
-      [
-        "telegram",
-        "Telegram",
-        "brand-telegram",
-        ["t.me", "telegram.me", "www.t.me", "www.telegram.me"],
-      ],
+
     ]) {
       const url = safeWebLink(profile[field], hosts);
       if (url) contacts.append(contactRow(label, icon, url));
@@ -261,32 +256,59 @@ function renderProfile(profile, isDemo = false) {
       contacts.append(
         contactRow("WhatsApp", "brand-whatsapp", "https://wa.me/" + whatsapp),
       );
-    if (
-      profile.contactEmail &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.contactEmail)
-    )
-      contacts.append(
-        contactRow("Email", "mail", "mailto:" + profile.contactEmail),
-      );
     const website = safeWebLink(profile.social);
     if (website)
       contacts.append(contactRow("Сайт / портфолио", "world", website));
-    if (profile.vcard !== "off")
-      contacts.append(
-        contactRow("Сохранить контакт", "user-plus", null, () =>
-          downloadContact(profile, name),
-        ),
-      );
     if (!contacts.children.length) return;
     contacts.prepend(heading("contacts"));
     content.append(contacts);
   }
+  const actions = node("div", "profile-actions");
+  const contactsVisible = parseSections(profile.sections).find(item => item.id === "contacts").visible;
+  if (contactsVisible) {
+    if (profile.vcard !== "off") {
+      const save = contactRow("Сохранить контакт", "user-plus", null, () => downloadContact(profile, name));
+      save.classList.add("profile-save");
+      actions.append(save);
+    }
+    const quick = node("div", "profile-quick");
+    const telegram = safeWebLink(profile.telegram, ["t.me", "telegram.me", "www.t.me", "www.telegram.me"]);
+    if (telegram) quick.append(contactRow("Telegram", "brand-telegram", telegram));
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.contactEmail || ""))
+      quick.append(contactRow("Email", "mail", "mailto:" + profile.contactEmail));
+    const path = publicUrl ? new URL(publicUrl, location.origin).pathname : location.pathname;
+    const match = path.match(/^\/p\/([A-Za-z0-9_-]+)$/);
+    if (match) quick.append(contactRow("QR-код", "qr", null, () => showCardQR(match[1])));
+    if (quick.children.length) actions.append(quick);
+  }
+  card.append(actions);
   for (const { id, visible } of parseSections(profile.sections)) {
     if (!visible) continue;
     if (id === "skills") skillsSection();
     else if (id === "contacts") contactsSection();
     else textSection(id, profile[{ about: "bio" }[id] || id]);
   }
-  card.append(content, node("div", "profile-signature", "NFC )))"));
+  const promo = node("a", "profile-signature", "Создать свою NFC-визитку ↗");
+  promo.href = "/";
+  card.append(content, promo);
   return card;
+}
+
+function showCardQR(id) {
+  const dialog = node("dialog", "profile-qr-dialog");
+  const title = node("h2", "", "QR-код");
+  title.id = "card-qr-title";
+  dialog.setAttribute("aria-labelledby", title.id);
+  const image = node("img", "profile-qr-image");
+  image.alt = "QR-код";
+  image.src = "/api/qr/" + encodeURIComponent(id);
+  const close = node("button", "profile-contact", "Закрыть");
+  close.type = "button";
+  close.onclick = () => dialog.close();
+  const link = node("a", "profile-qr-link", location.origin + "/p/" + id);
+  link.href = "/p/" + id;
+  dialog.append(title, image, link, close);
+  dialog.addEventListener("close", () => dialog.remove(), { once: true });
+  document.body.append(dialog);
+  dialog.showModal();
 }

@@ -98,7 +98,7 @@ function draftTranslations(profile) {
 function updatePreview() {
   const profile = draft();
   $("#profile-view").replaceChildren(
-    renderProfile(localizeProfile(profile, draftTranslations(profile))),
+    renderProfile(localizeProfile(profile, draftTranslations(profile)), false, $("#public-link").value),
   );
 }
 function renderPhoto() {

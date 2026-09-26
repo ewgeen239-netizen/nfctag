@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "project": {
+    "name": "Nfc tag",
+    "productType": null,
+    "stack": []
+  },
+  "sources": {
+    "tokens": [],
+    "components": [],
+    "assets": [
+      "public/assets",
+      "assets"
+    ],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "unknown",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [],
+    "avoid": []
+  },
+  "decisions": [
+    "Public NFC profiles use centered 96px circular avatars, translucent glass controls, a blue primary save-contact button, compact Telegram/email/QR actions and a product attribution link. Preserve saved content and section visibility."
+  ],
+  "evidence": [],
+  "generatedAt": "2026-09-26T04:04:04.362Z"
+}

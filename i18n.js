@@ -1,5 +1,7 @@
 // Each entry: Russian source -> Polish, English, German. Add languages here and in languages below.
 const translations = {
+  "Создать свою NFC-визитку ↗": ["Stwórz swoją wizytówkę NFC ↗", "Create your NFC card ↗", "Eigene NFC-Karte erstellen ↗"],
+  "QR-код": ["Kod QR", "QR code", "QR-Code"],
   "Кабинет временно недоступен. Попробуй позже.": ["Konto jest chwilowo niedostępne. Spróbuj później.", "Your account is temporarily unavailable. Please try again later.", "Das Konto ist vorübergehend nicht verfügbar. Versuche es später erneut."],
   "NFC — всё о тебе по касанию": [
     "NFC — wszystko o Tobie jednym dotknięciem",

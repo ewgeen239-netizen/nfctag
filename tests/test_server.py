@@ -33,6 +33,11 @@ class AccountsTest(unittest.TestCase):
         status,data,headers=self.req(a,'/api/register','POST',credentials);self.assertEqual(status,200);aid=data['id']
         self.assertIn('HttpOnly',headers['Set-Cookie']);self.assertIn('SameSite=Strict',headers['Set-Cookie'])
         status,data,_=self.req(b,'/api/register','POST',{'email':'b@example.test','password':'second-test-password'});self.assertEqual(status,200);bid=data['id'];self.assertNotEqual(aid,bid)
+        qr_status, qr_bytes, qr_headers = self.req(anon, '/api/qr/' + aid)
+        self.assertEqual(qr_status, 200)
+        self.assertEqual(qr_headers['Content-Type'], 'image/png')
+        self.assertTrue(qr_bytes.startswith(b'\x89PNG\r\n\x1a\n'))
+        self.assertEqual(self.req(anon, '/api/qr/missing')[0], 404)
         self.assertEqual(self.req(anon,'/api/me')[0],401)
         self.assertEqual(self.req(anon,'/api/profile','PUT',{'firstName':'Unauthorized'})[0],401)
         self.assertEqual(self.req(a,'/api/profile','PUT',{'firstName':'Alice','design':'Лайм','idea':'Private design brief'})[0],200)
