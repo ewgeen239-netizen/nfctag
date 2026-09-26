@@ -1991,8 +1991,8 @@ html[lang="de"] .header-tools .small {
   padding-top: 32px;
 }
 .digital-card .profile-portrait {
-  width: 96px;
-  height: 96px;
+  width: 132px;
+  height: 132px;
   min-height: 0;
   margin: 0 auto;
   border-radius: 50%;
@@ -2003,34 +2003,34 @@ html[lang="de"] .header-tools .small {
 }
 .digital-card .profile-portrait:after { display: none; }
 .digital-card .profile-photo { width: 100%; height: 100%; object-fit: cover; }
-.digital-card .profile-monogram { height: 100%; font-size: 32px; letter-spacing: -1px; }
+.digital-card .profile-monogram { height: 100%; font-size: 44px; letter-spacing: -1px; }
 .digital-card .profile-identity { position: static; text-align: center; padding: 20px 24px 0; }
 .digital-card .profile-name { color: #252a20; font-size: 28px; line-height: 1.15; letter-spacing: -.8px; }
 .digital-card .profile-job { color: #51594b; font-size: 14px; margin-top: 10px; }
-.profile-actions { padding: 22px 24px 0; }
+.profile-actions { padding: 18px 24px 0; }
 .profile-quick { display: flex; gap: 10px; margin-top: 10px; }
 .digital-card .profile-contact, .profile-qr-dialog .profile-contact {
   border: 1px solid #fff;
-  border-radius: 22px;
+  border-radius: 16px;
   background: linear-gradient(155deg, #ffffffb8, #ffffff45);
   box-shadow: inset 0 1px 1px #fff, 0 4px 14px #3140210c;
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   color: #2c3525;
-  padding: 14px 16px;
-  min-height: 52px;
+  padding: 11px 14px;
+  min-height: 46px;
   transition: background .2s, transform .2s;
 }
 .digital-card .profile-save {
-  background: linear-gradient(145deg, #5264ee, #3449cf);
+  background: linear-gradient(160deg, #6474ed, #3f50c8);
   color: #fff;
   border-color: #a2acff;
-  min-height: 60px;
+  min-height: 48px;
   font-weight: 600;
 }
 .profile-save .contact-icon { filter: brightness(0) invert(1); }
 .profile-save .contact-arrow { color: #fff; }
-.profile-quick .profile-contact { flex: 1; width: auto; flex-direction: column; gap: 6px; font-size: 11px; padding: 12px 8px; }
+.profile-quick .profile-contact { flex: 1; width: auto; flex-direction: row; justify-content: center; gap: 7px; font-size: 11px; padding: 10px 8px; }
 .profile-quick .contact-arrow { display: none; }
 .digital-card .profile-contact:hover { background-color: #ffffffb0; transform: translateY(-1px); }
 .digital-card .profile-contact:focus-visible, .profile-signature:focus-visible { outline: 3px solid #4254d8; outline-offset: 3px; }
@@ -2045,4 +2045,43 @@ html[lang="de"] .header-tools .small {
 @media (prefers-reduced-transparency: reduce) {
   .digital-card .profile-contact { background: #fff; backdrop-filter: none; }
   .digital-card .profile-save { background: #3449cf; }
+}
+
+/* Secondary contacts use inset icon tiles and quiet directional affordances. */
+.digital-card .profile-save { font-size: 13px; box-shadow: inset 0 1px 0 #ffffff60, 0 5px 14px #4050c825; }
+.profile-quick .contact-label { flex: initial; }
+.profile-quick .contact-icon { width: 18px; height: 18px; }
+.digital-card .profile-contacts .profile-contact {
+  border-radius: 18px;
+  min-height: 58px;
+  padding: 9px 12px;
+  gap: 12px;
+  background: linear-gradient(120deg, #ffffffc0, #ffffff55);
+  border-color: #ffffffd9;
+  box-shadow: inset 0 1px 0 #fff, 0 3px 12px #25301c08;
+  font-size: 13px;
+  font-weight: 500;
+}
+.profile-contacts .contact-icon {
+  box-sizing: content-box;
+  width: 19px;
+  height: 19px;
+  padding: 9px;
+  border-radius: 12px;
+  background: #ffffff70;
+  filter: none;
+}
+.profile-contacts .contact-arrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #46543a15;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #58604f;
+}
+.digital-card .profile-contact:active { transform: scale(.98); }
+@media (prefers-reduced-transparency: reduce) {
+  .digital-card .profile-contacts .profile-contact { background: #fff; }
 }
